@@ -1,0 +1,48 @@
+{
+ "date": "2026-10-10T09:00",
+ "houses": [
+  {
+   "n": "Kala",
+   "b": 5
+  },
+  {
+   "n": "Rachana",
+   "b": 2
+  },
+  {
+   "n": "Patt",
+   "b": 1
+  }
+ ],
+ "comps": [],
+ "gallery": [],
+ "parts": [],
+ "tpl": 1,
+ "tplOn": [
+  true,
+  true,
+  true
+ ],
+ "tplBg": [
+  null,
+  null,
+  null
+ ],
+ "set": {
+  "name": "FINE ARTS 2026",
+  "hero": "FINE ARTS 2026",
+  "tag": "BLOSSOM ARTS & CULTURAL FESTIVAL",
+  "desc": "Celebrating talent, literary perfection, and academic excellence of blossom college",
+  "venue": "Blossom College",
+  "footer": "© Students Union 2026-27",
+  "posterNote": "@blossom Students union",
+  "logo": ""
+ },
+ "pts": [
+  5,
+  3,
+  1
+ ],
+ "v": 1,
+ "upd": 0
+}

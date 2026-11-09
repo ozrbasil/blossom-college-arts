@@ -1,0 +1,7 @@
+{
+  "name": "fest-portal",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": { "mongodb": "^6.8.0" },
+  "engines": { "node": ">=18" }
+}
