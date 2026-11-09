@@ -1,18 +1,29 @@
 const crypto = require("crypto");
-const { getDb, isAdmin, cors, deny, body } = require("../lib/db");
+const { getDb, getBackupDb, isAdmin, cors, deny, body } = require("../lib/db");
 
 const ID = /^[a-f0-9]{16}$/;
+
+// Look in the main database first, then in the second one
+async function findImage(id) {
+  let doc = null, err = null;
+  try { doc = await (await getDb()).collection("images").findOne({ _id: id }); } catch (e) { err = e; }
+  if (doc) return doc;
+  try {
+    const b = await getBackupDb();
+    if (b) { const d2 = await b.collection("images").findOne({ _id: id }); if (d2) return d2; }
+  } catch (e) { /* ignore */ }
+  if (err) throw err;
+  return null;
+}
 
 module.exports = async (req, res) => {
   cors(res);
   if (req.method === "OPTIONS") return res.status(204).end();
   try {
-    const col = (await getDb()).collection("images");
-
     if (req.method === "GET") {
       const id = String(req.query.id || "");
       if (!ID.test(id)) return res.status(400).end();
-      const doc = await col.findOne({ _id: id });
+      const doc = await findImage(id);
       if (!doc) return res.status(404).end();
       res.setHeader("Content-Type", doc.mime);
       res.setHeader("X-Content-Type-Options", "nosniff");
@@ -29,7 +40,12 @@ module.exports = async (req, res) => {
       const buf = Buffer.from(m[2], "base64");
       if (buf.length > 3.5 * 1024 * 1024) return res.status(413).json({ error: "too large" });
       const id = crypto.randomBytes(8).toString("hex");
-      await col.insertOne({ _id: id, mime: m[1], data: buf, at: Date.now() });
+      const record = { _id: id, mime: m[1], data: buf, at: Date.now() };
+      await (await getDb()).collection("images").insertOne(record);
+      try {
+        const b2 = await getBackupDb();
+        if (b2) await b2.collection("images").insertOne({ ...record });
+      } catch (e) { console.error("Second database photo copy failed:", e.message); }
       return res.status(200).json({ path: "/api/img?id=" + id });
     }
 
@@ -37,7 +53,11 @@ module.exports = async (req, res) => {
       if (!isAdmin(req)) return deny(res);
       const id = String(req.query.id || "");
       if (!ID.test(id)) return res.status(400).end();
-      await col.deleteOne({ _id: id });
+      await (await getDb()).collection("images").deleteOne({ _id: id });
+      try {
+        const b2 = await getBackupDb();
+        if (b2) await b2.collection("images").deleteOne({ _id: id });
+      } catch (e) { /* ignore */ }
       return res.status(200).json({ ok: true });
     }
     return res.status(405).json({ error: "method" });
