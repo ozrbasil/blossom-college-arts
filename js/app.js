@@ -44,7 +44,7 @@ function about(){return `<h2>About Fine Arts 2026</h2>
 <h3>Festival Resources</h3>
 <p class="mu">Explore the festival brochure and programme schedule below.</p>
 <div class="row" style="flex-wrap:wrap;gap:10px">
-<a class="btn" href="./assets/brochure.pdf" target="_blank" rel="noopener">View Brochure →</a>
+<a class="btn" href="#brochure">View Brochure →</a>
 <a class="btn s" href="#schedule">View Schedule →</a>
 </div>
 </div>`}
@@ -238,7 +238,27 @@ function addSR(i){S.sched[i].r.push({i:"",t:"",p:""});save();render()}
 function schedRows(rows,defD){rows=rows.map(a=>a.map(x=>String(x==null?"":x).trim())).filter(a=>a.some(Boolean));if(!rows.length)return 0;const h=rows[0].map(x=>x.toLowerCase());let c=null;if(h.some(x=>/^(date|day|item|event|program|time|place|venue|location)/.test(x))){const f=re=>h.findIndex(x=>re.test(x));c={d:f(/^(date|day)/),i:f(/^(item|event|program|name)/),t:f(/^time/),p:f(/^(place|venue|location)/)};rows.shift()}const n=Math.max(0,...rows.map(a=>a.length));if(!c||c.i<0||c.t<0||c.p<0)c=n>=4?{d:0,i:1,t:2,p:3}:{d:-1,i:0,t:1,p:2};const out=[];let cur=defD||"";rows.forEach(a=>{const dv=c.d>=0?(a[c.d]||""):"",it=a[c.i]||"",tm=a[c.t]||"",pl=a[c.p]||"";if(dv)cur=dv;if(!it&&!tm&&!pl)return;const key=cur||"Schedule";let day=out.find(x=>x.d.toLowerCase()===key.toLowerCase());if(!day){day={d:key,r:[]};out.push(day)}day.r.push({i:it,t:tm,p:pl})});S.sched=out;save();render();return out.reduce((s,x)=>s+x.r.length,0)}
 function schedFile(f){if(!f)return;if(!window.XLSX)return toast("Spreadsheet reader not loaded (needs internet)");const dd=($("#sdd")?$("#sdd").value:"").trim(),r=new FileReader();r.onload=()=>{try{const wb=XLSX.read(r.result,{type:"array"});const n=schedRows(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:"",raw:false}),dd);toast(n?n+" schedule rows added — press Update site to publish":"No rows found in that file")}catch(e){toast("Could not read that file")}};r.readAsArrayBuffer(f)}
 // ===== end Schedule =====
+// ===== Brochure flip-book (opens in same tab at #brochure) =====
+const BK_N=6;let BP=0,BKLOCK=false;
+function brochure(){let h="";for(let i=0;i<BK_N;i++)h+=`<div class="bkl${i<BP?" fl":""}" style="z-index:${i<BP?i:BK_N-i}"><img src="./assets/brochure/page-${i+1}.jpg" alt="Brochure page ${i+1}" draggable="false"><div class="bkb"></div></div>`;
+return `<h2>Festival Brochure</h2><p><a class="btn s" href="#about">← Back to About</a></p>
+<div class="bkw"><div class="bk" id="bk" onclick="bkClick(event)">${h}</div>
+<div class="bkc"><button class="btn s" id="bkp" onclick="bkGo(-1)" aria-label="Previous page">←</button><span id="bkn" class="mu"></span><button class="btn" id="bkx" onclick="bkGo(1)" aria-label="Next page">→</button></div>
+<p class="mu" style="text-align:center;font-size:13px">Tap the page edges, swipe, or use the arrow keys to turn pages.</p>
+<p style="text-align:center"><button class="btn s" onclick="bkFull()">⛶ Full screen</button> <a class="btn s" href="./assets/brochure.pdf" download>Download PDF</a></p></div>`}
+function bkUI(){const n=$("#bkn");if(!n)return;n.textContent=(BP+1)+" / "+BK_N;$("#bkp").style.opacity=BP?1:.4;$("#bkx").style.opacity=BP<BK_N-1?1:.4}
+function bkZ(){document.querySelectorAll("#bk .bkl").forEach((l,i)=>{l.style.zIndex=i<BP?i:BK_N-i;l.classList.remove("turn")})}
+function bkGo(d){if(BKLOCK)return;const t=BP+d;if(t<0||t>BK_N-1)return;const L=document.querySelectorAll("#bk .bkl");BKLOCK=true;
+if(d>0){const l=L[BP];l.style.zIndex=50;l.classList.add("turn","fl");BP=t}else{BP=t;const l=L[BP];l.style.zIndex=50;l.classList.add("turn");l.classList.remove("fl")}
+bkUI();setTimeout(()=>{bkZ();BKLOCK=false},950)}
+function bkClick(e){const r=e.currentTarget.getBoundingClientRect(),x=(e.clientX-r.left)/r.width;if(x<.3)bkGo(-1);else if(x>.7)bkGo(1)}
+function bkFull(){const b=$("#bk");if(!b)return;const f=b.requestFullscreen||b.webkitRequestFullscreen;if(f)f.call(b)}
+document.addEventListener("keydown",e=>{if(location.hash.split("?")[0]!=="#brochure")return;if(e.key==="ArrowRight")bkGo(1);else if(e.key==="ArrowLeft")bkGo(-1)});
+let bkX=null;document.addEventListener("touchstart",e=>{bkX=e.target.closest&&e.target.closest("#bk")?e.touches[0].clientX:null},{passive:true});
+document.addEventListener("touchend",e=>{if(bkX==null)return;const dx=e.changedTouches[0].clientX-bkX;bkX=null;if(Math.abs(dx)>40){bkGo(dx<0?1:-1);window.bkSwiped=Date.now()}},{passive:true});
+// ===== end Brochure =====
+
 function render(){const [r,q]=(location.hash.slice(1)||"home").split("?");nav(r);bnRender();document.title=S.set.name+" | Annual Arts & Cultural Fest";$("#ft").textContent=S.set.footer+(S.upd?" • Updated "+new Date(S.upd).toLocaleString():"");clearInterval(tmr);
-$("#app").innerHTML=!LOADED&&r!=="admin"?'<div class="card mu">Loading…</div>':r==="result"?result(q):r==="gallery"?`<h2>Festival Gallery</h2>${gal()}`:r==="about"?about():r==="schedule"?schedule():r==="admin"?(admin?adminPanel():login()):home();
-if(LOADED&&(r==="home"||!r)){fill();tick();tmr=setInterval(tick,1000)}if(window.LK!==location.hash){window.scrollTo(0,0);window.LK=location.hash}fx();bar()}
+$("#app").innerHTML=!LOADED&&r!=="admin"&&r!=="brochure"?'<div class="card mu">Loading…</div>':r==="result"?result(q):r==="gallery"?`<h2>Festival Gallery</h2>${gal()}`:r==="about"?about():r==="brochure"?brochure():r==="schedule"?schedule():r==="admin"?(admin?adminPanel():login()):home();
+if(LOADED&&(r==="home"||!r)){fill();tick();tmr=setInterval(tick,1000)}if(window.LK!==location.hash){window.scrollTo(0,0);window.LK=location.hash}fx();bar();if(r==="brochure")bkUI()}
 addEventListener("hashchange",render);[0,1,2].forEach(loadBg);loadLogo();const rs=()=>{try{const sc=sessionStorage.getItem("sc");if(sc){sessionStorage.removeItem("sc");window.scrollTo(0,+sc)}}catch(e){}};if(REMOTE){try{const hs=sessionStorage.getItem("hs");if(hs&&!location.hash)location.hash=hs;sessionStorage.removeItem("hs")}catch(e){}}render();loadData(true);setInterval(()=>loadData(false),8000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadData(false)});setTimeout(rs,300);if(document.fonts)Promise.all(["400","600","700","800"].map(w=>document.fonts.load(w+" 20px Sora"))).then(render).catch(()=>{});
