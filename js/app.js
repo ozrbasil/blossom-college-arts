@@ -192,6 +192,41 @@ function addSR(i){S.sched[i].r.push({i:"",t:"",p:""});save();render()}
 function schedRows(rows,defD){rows=rows.map(a=>a.map(x=>String(x==null?"":x).trim())).filter(a=>a.some(Boolean));if(!rows.length)return 0;const h=rows[0].map(x=>x.toLowerCase());let c=null;if(h.some(x=>/^(date|day|item|event|program|time|place|venue|location)/.test(x))){const f=re=>h.findIndex(x=>re.test(x));c={d:f(/^(date|day)/),i:f(/^(item|event|program|name)/),t:f(/^time/),p:f(/^(place|venue|location)/)};rows.shift()}const n=Math.max(0,...rows.map(a=>a.length));if(!c||c.i<0||c.t<0||c.p<0)c=n>=4?{d:0,i:1,t:2,p:3}:{d:-1,i:0,t:1,p:2};const out=[];let cur=defD||"";rows.forEach(a=>{const dv=c.d>=0?(a[c.d]||""):"",it=a[c.i]||"",tm=a[c.t]||"",pl=a[c.p]||"";if(dv)cur=dv;if(!it&&!tm&&!pl)return;const key=cur||"Schedule";let day=out.find(x=>x.d.toLowerCase()===key.toLowerCase());if(!day){day={d:key,r:[]};out.push(day)}day.r.push({i:it,t:tm,p:pl})});S.sched=out;save();render();return out.reduce((s,x)=>s+x.r.length,0)}
 function schedFile(f){if(!f)return;if(!window.XLSX)return toast("Spreadsheet reader not loaded (needs internet)");const dd=($("#sdd")?$("#sdd").value:"").trim(),r=new FileReader();r.onload=()=>{try{const wb=XLSX.read(r.result,{type:"array"});const n=schedRows(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:"",raw:false}),dd);toast(n?n+" schedule rows added — press Update site to publish":"No rows found in that file")}catch(e){toast("Could not read that file")}};r.readAsArrayBuffer(f)}
 // ===== end Schedule =====
+
+// ==========================================
+// Team Points API Endpoints & Admin Support
+// ==========================================
+
+// GET Team Points API (Backend route example if needed inside api/data.js)
+// app.get('/api/points', async (req, res) => {
+//     try {
+//         const points = await db.collection('points').find({}).toArray();
+//         res.json({ success: true, data: points });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// });
+
+// UPDATE Team Point API (Backend route example if needed inside api/data.js)
+// app.post('/api/points/update', async (req, res) => {
+//     const { teamId, points } = req.body;
+//     if (!teamId || points === undefined) {
+//         return res.status(400).json({ success: false, message: "Team ID and points are required" });
+//     }
+//     try {
+//         await db.collection('points').updateOne(
+//             { teamId: teamId },
+//             { $set: { points: parseInt(points, 10) } },
+//             { upsert: true }
+//         );
+//         res.json({ success: true, message: "Team point updated successfully!" });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// });
+
+// ==========================================
+
 function render(){const [r,q]=(location.hash.slice(1)||"home").split("?");nav(r);bnRender();document.title=S.set.name+" | Annual Arts & Cultural Fest";$("#ft").textContent=S.set.footer+(S.upd?" · Updated "+new Date(S.upd).toLocaleString():"");clearInterval(tmr);
 $("#app").innerHTML=!LOADED&&r!=="admin"?'<div class="card mu">Loading…</div>':r==="result"?result(q):r==="gallery"?`<h2>Festival Gallery</h2>${gal()}`:r==="about"?about():r==="schedule"?schedule():r==="admin"?(admin?adminPanel():login()):home();
 if(LOADED&&(r==="home"||!r)){fill();tick();tmr=setInterval(tick,1000)}if(window.LK!==location.hash){window.scrollTo(0,0);window.LK=location.hash}fx();bar()}
