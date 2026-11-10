@@ -22,10 +22,10 @@ function nav(r){$("#nav").innerHTML='<a href="#home" title="Home" onclick="tap5(
 function houseList(){const s=standings().filter(x=>x.p>=1);if(!s.length)return'<div class="card mu">No team points yet.</div>';const m=Math.max(1,...s.map(x=>x.p));return s.map((h,i)=>`<div class="card"><div class="house"><div class="r">${i+1}</div><div class="n">${esc(h.n)}<div class="mu" style="font-size:12px;font-weight:400">${i?"":"Current Lead"}</div></div><div class="p">${h.p} PTS</div></div><div class="bar"><i style="width:${h.p/m*100}%"></i></div></div>`).join("")}
 function tick(){const e=$("#cd");if(!e)return clearInterval(tmr);let d=Math.max(0,new Date(S.date)-Date.now())/1000|0;const v=[d/86400|0,d%86400/3600|0,d%3600/60|0,d%60];e.innerHTML=["Days","Hours","Mins","Secs"].map((l,i)=>`<div><b>${String(v[i]).padStart(2,"0")}</b><span>${l}</span></div>`).join("")}
 function home(){const d=new Date(S.date);return `<div class="hero">${S.set.logo?`<img src="${S.set.logo}" alt="Logo" style="height:110px;max-width:70%;object-fit:contain;display:block;margin:0 auto 14px">`:""}<small>${esc(S.set.tag)}</small><h1>${esc(S.set.hero)}</h1><p>${esc(S.set.desc)}</p>
-<div class="meta"><span>📍 ${esc(S.set.venue)}</span></div><a class="btn" href="#result">VIEW RESULTS â†’</a></div>
+<div class="meta"><span>📍 ${esc(S.set.venue)}</span></div><a class="btn" href="#result">VIEW RESULTS →</a></div>
 
-${standings().some(x=>x.p>=1)?`<h2>Who's Leading? <span class="tag">LIVE</span></h2>${houseList()}<a class="btn s" href="#result">See all houses & full standings â†’</a>`:""}
-<h2>Find a Result</h2><div class="card"><div class="row"><select id="fp"></select></div><br><button class="btn" onclick="location.hash='result?'+($('#fp').value||'')">GET RESULT â†’</button></div>
+${standings().some(x=>x.p>=1)?`<h2>Who's Leading? <span class="tag">LIVE</span></h2>${houseList()}<a class="btn s" href="#result">See all houses & full standings →</a>`:""}
+<h2>Find a Result</h2><div class="card"><div class="row"><select id="fp"></select></div><br><button class="btn" onclick="location.hash='result?'+($('#fp').value||'')">GET RESULT →</button></div>
 <h2>In Pictures</h2>${gal(8)}<p><a class="btn s" href="#gallery">Open full gallery</a></p>`}
 function fill(){$("#fp").innerHTML='<option value="">All competitions</option>'+S.comps.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}
 function gal(n){const g=n?S.gallery.slice(0,n):S.gallery;return g.length?`<div class="grid">${g.map((s,i)=>`<div style="position:relative"><img src="${s}" alt="Festival photo" onclick="lb(${i})"><button class="btn" style="position:absolute;right:8px;bottom:8px;padding:5px 12px;font-size:12px" onclick="gdl(${i})">â¬‡ Download</button></div>`).join("")}</div>`:'<div class="card mu">No photos yet. Admins can upload from the admin panel.</div>'}
@@ -45,7 +45,7 @@ function about(){return `<h2>About Fine Arts 2026</h2>
 <p class="mu">Explore the festival brochure and programme schedule below.</p>
 <div class="row" style="flex-wrap:wrap;gap:10px">
 <a class="btn" href="./assets/brochure.pdf" target="_blank" rel="noopener">View Brochure â†—</a>
-<a class="btn s" href="#schedule">View Schedule â†’</a>
+<a class="btn s" href="#schedule">View Schedule →</a>
 </div>
 </div>`}
 function result(q){const id=+q,cs=S.comps.filter(c=>!id||c.id===id);return `<h2>Published Results</h2>${houseList()}<h2>Competition Results</h2>
