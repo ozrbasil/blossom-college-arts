@@ -77,7 +77,7 @@ async function upd(btn){applyAll();save();render();if(REMOTE)await pubNow();else
 function bump(b,d){const i=b.parentElement.querySelector("input");i.value=(+i.value||0)+d}
 function markCard(){return `<div class="card"><b>Mark format</b> <span class="mu">(custom marks per position, comma separated)</span><br><br><input value="${S.pts.join(",")}" data-a="pm" placeholder="e.g. 10,7,5,3,1"><div class="mu" style="font-size:12px;margin:6px 0 10px">Position 1 gets the first number, position 2 the second, and so on. Positions beyond the list get 0. A single competition can use its own marks in "Competitions & results".</div></div>`}
 const setS=(k,v)=>{S.set[k]=v;save();nav("admin")};
-function settCard(){const f=[["name","Festival name (menu, posters, page title)"],["hero","Home title"],["tag","Tagline"],["venue","Venue"],["footer","Footer text"]];return `<div class="card"><b>Site settings</b><br><br>${f.map(([k,l])=>`<label class="mu" style="font-size:13px">${l}</label><input value="${esc(S.set[k])}" data-a="sset" data-i="${k}" style="margin:4px 0 10px">`).join("")}<label class="mu" style="font-size:13px">Logo (PNG, shown at the top of the site and posters)</label><div style="margin:6px 0 12px">${S.set.logo?`<img src="${S.set.logo}" alt="Logo" style="height:70px;display:block;margin-bottom:8px">`:""}<input type="file" accept="image/png" onchange="upLogo(this.files[0])">${S.set.logo?`<button class="btn d" style="padding:3px 12px;margin-top:6px" onclick="S.set.logo='';save();loadLogo();render()">Remove logo</button>`:""}</div><label class="mu" style="font-size:13px">Description</label><textarea rows="3" data-a="sset" data-i="desc" style="margin:4px 0 10px">${esc(S.set.desc)}</textarea><button class="btn s" onclick="S.set={...DEF};save();render()">Restore defaults</button></div>`}
+function settCard(){const f=[["name","Festival name (menu, posters, page title)"],["hero","Home title"],["tag","Tagline"],["venue","Venue"],["footer","Footer text"]];return `<div class="card"><b>Site settings</b><br><br>${f.map(([k,l])=>`<label class="mu" style="font-size:13px">${l}</label><input value="${esc(S.set[k])}" data-a="sset" data-i="${k}" style="margin:4px 0 10px">`).join("")}<label class="mu" style="font-size:13px">Logo (PNG, shown at the top of the site)</label><div style="margin:6px 0 12px">${S.set.logo?`<img src="${S.set.logo}" alt="Logo" style="height:70px;display:block;margin-bottom:8px">`:""}<input type="file" accept="image/png" onchange="upLogo(this.files[0])">${S.set.logo?`<button class="btn d" style="padding:3px 12px;margin-top:6px" onclick="S.set.logo='';save();loadLogo();render()">Remove logo</button>`:""}</div><label class="mu" style="font-size:13px">Description</label><textarea rows="3" data-a="sset" data-i="desc" style="margin:4px 0 10px">${esc(S.set.desc)}</textarea><button class="btn s" onclick="S.set={...DEF};save();render()">Restore defaults</button></div>`}
 function poster(c,t){
 const bi=BGI[t-1],B=TPL[t-1],T=bi?{...B,ac:t===3?"#ffd76a":B.ac,tx:"#ffffff"}:B,
 cv=document.createElement("canvas");cv.width=1080;cv.height=1350;
@@ -92,15 +92,12 @@ if(bi){
 const F="Sora,system-ui,sans-serif",L=150,
 fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"};
 
-if(LG){const k=Math.min(80/LG.height,300/LG.width);x.drawImage(LG,L,60,LG.width*k,LG.height*k)}
-
 const no=pubList().indexOf(c)+1||1;
 x.textAlign="right";x.fillStyle=T.ac;fo(700,32);
 x.fillText("Result No "+String(no).padStart(2,"0"),960,140);
 
 x.textAlign="left";
-x.fillStyle=T.ac;fo(400,44);x.fillText((c.type||"Individual"),L,285);
-fo(800,68);
+x.fillStyle=T.ac;fo(800,68);
 let ln=[],cur="";
 c.name.split(" ").forEach(w=>{const tt=cur?cur+" "+w:w;if(x.measureText(tt).width>800&&cur){ln.push(cur);cur=w}else cur=tt});
 ln.push(cur);ln=ln.slice(0,2);
