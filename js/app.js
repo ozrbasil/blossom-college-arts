@@ -86,7 +86,7 @@ async function gdl(i) {
                 type.includes("webp") ? "webp" :
                 type.includes("jpeg") ? "jpg" : "jpg";
 
-    a.download = "euphoria-photo-" + (i + 1) + "." + ext;
+    a.download = "Finearts-photo-" + (i + 1) + "." + ext;
 
     document.body.appendChild(a);
     a.click();
