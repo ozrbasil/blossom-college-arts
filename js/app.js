@@ -83,18 +83,14 @@ const bi=BGI[t-1],B=TPL[t-1],T=bi?{...B,ac:t===3?"#ffd76a":B.ac,tx:"#ffffff"}:B,
 cv=document.createElement("canvas");cv.width=1080;cv.height=1350;
 const x=cv.getContext("2d"),g=x.createLinearGradient(0,0,1080,1350);
 g.addColorStop(0,T.bg[0]);g.addColorStop(1,T.bg[1]);x.fillStyle=g;x.fillRect(0,0,1080,1350);
-let shadow=false;
 if(bi){
   const k=Math.max(1080/bi.width,1350/bi.height),bw=bi.width*k,bh=bi.height*k;
   x.drawImage(bi,(1080-bw)/2,(1350-bh)/2,bw,bh);
   const ov=Math.max(0,Math.min(.8,+S.set.ov||0));
   if(ov>0){x.fillStyle="rgba(0,0,0,"+ov+")";x.fillRect(0,0,1080,1350)}
-  shadow=true;
 }
 const F="Sora,system-ui,sans-serif",L=150,
-fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"},
-shd=on=>{x.shadowColor=on&&shadow?"rgba(0,0,0,.45)":"transparent";x.shadowBlur=on&&shadow?12:0};
-shd(true);
+fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"};
 
 if(LG){const k=Math.min(80/LG.height,300/LG.width);x.drawImage(LG,L,60,LG.width*k,LG.height*k)}
 
@@ -121,7 +117,7 @@ rs.forEach((r,i)=>{
   fo(400,28*s);x.fillText(r.h,254,ry+31*s,780);
 });
 
-shd(true);x.fillStyle=T.ac;fo(700,22);x.fillText(S.set.posterNote,L,1202);
+x.fillStyle=T.ac;fo(700,22);x.fillText(S.set.posterNote,L,1202);
 return cv}
 function toast(m){let e=$("#ts");if(!e){e=document.createElement("div");e.id="ts";e.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ac);color:#000;padding:10px 18px;border-radius:20px;font-weight:700;z-index:30;max-width:90%;text-align:center";document.body.appendChild(e)}e.textContent=m;e.style.bottom="28px";e.style.display="block";clearTimeout(e.t);e.t=setTimeout(()=>e.style.display="none",3000)}
 window.alert=toast;
