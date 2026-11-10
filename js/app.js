@@ -22,7 +22,7 @@ function nav(r){$("#nav").innerHTML='<a href="#home" title="Home" onclick="tap5(
 function houseList(){const s=standings().filter(x=>x.p>=1);if(!s.length)return'<div class="card mu">No team points yet.</div>';const m=Math.max(1,...s.map(x=>x.p));return s.map((h,i)=>`<div class="card"><div class="house"><div class="r">${i+1}</div><div class="n">${esc(h.n)}<div class="mu" style="font-size:12px;font-weight:400">${i?"":"Current Lead"}</div></div><div class="p">${h.p} PTS</div></div><div class="bar"><i style="width:${h.p/m*100}%"></i></div></div>`).join("")}
 function tick(){const e=$("#cd");if(!e)return clearInterval(tmr);let d=Math.max(0,new Date(S.date)-Date.now())/1000|0;const v=[d/86400|0,d%86400/3600|0,d%3600/60|0,d%60];e.innerHTML=["Days","Hours","Mins","Secs"].map((l,i)=>`<div><b>${String(v[i]).padStart(2,"0")}</b><span>${l}</span></div>`).join("")}
 function home(){const d=new Date(S.date);return `<div class="hero">${S.set.logo?`<img src="${S.set.logo}" alt="Logo" style="height:110px;max-width:70%;object-fit:contain;display:block;margin:0 auto 14px">`:""}<small>${esc(S.set.tag)}</small><h1>${esc(S.set.hero)}</h1><p>${esc(S.set.desc)}</p>
-<div class="meta"><span>ðŸ“ ${esc(S.set.venue)}</span></div><a class="btn" href="#result">VIEW RESULTS â†’</a></div>
+<div class="meta"><span>📍 ${esc(S.set.venue)}</span></div><a class="btn" href="#result">VIEW RESULTS â†’</a></div>
 
 ${standings().some(x=>x.p>=1)?`<h2>Who's Leading? <span class="tag">LIVE</span></h2>${houseList()}<a class="btn s" href="#result">See all houses & full standings â†’</a>`:""}
 <h2>Find a Result</h2><div class="card"><div class="row"><select id="fp"></select></div><br><button class="btn" onclick="location.hash='result?'+($('#fp').value||'')">GET RESULT â†’</button></div>
