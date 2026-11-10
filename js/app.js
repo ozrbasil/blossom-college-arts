@@ -1,6 +1,6 @@
 const CATS=["Alpha Zone","Core Zone","Prime Zone","General"],PTS=[5,3,1];
 const SEED={date:"2026-10-10T09:00",houses:[],comps:[],gallery:[]};
-const stEl=document.getElementById("st");let S0=null;try{S0=JSON.parse((stEl&&stEl.textContent)||"null")}catch(e){}const REMOTE=true;let S=Object.assign(JSON.parse(JSON.stringify(SEED)),S0||{});delete S.pass;S.houses=S.houses||[];S.comps=S.comps||[];S.gallery=S.gallery||[];S.parts=S.parts||[];S.tpl=S.tpl||1;S.tplOn=S.tplOn||[true,true,true];S.tplBg=S.tplBg||[null,null,null];const OLD={name:"EVENT EUPHORIA ’26",hero:"Euphoria",tag:"7TH ANNUAL ARTS & CULTURAL FESTIVAL",desc:"Sirajul Irfan Da’wa Dars flagship cultural & academic competition. Celebrating talent, literary perfection, and academic excellence.",venue:"Sirajul Irfan Off Campus",footer:"© 2026 Sirajul Irfan Da’wa Dars · Event Euphoria Festival Portal",posterNote:"Sirajul Irfan Da’wa Dars",logo:""};const DEF={name:"FINE ARTS 2026",hero:"FINE ARTS 2026",tag:"BLOSSOM ARTS & CULTURAL FESTIVAL",desc:"Celebrating talent, literary perfection, and academic excellence of blossom college",venue:"Blossom College",footer:"© Students Union 2026-27",posterNote:"@blossom Students union",logo:""};S.set={...DEF,...(S.set||{})};Object.keys(OLD).forEach(k=>{if(S.set[k]===OLD[k])S.set[k]=DEF[k]});S.pts=S.pts||[5,3,1];
+const stEl=document.getElementById("st");let S0=null;try{S0=JSON.parse((stEl&&stEl.textContent)||"null")}catch(e){}const REMOTE=true;let S=Object.assign(JSON.parse(JSON.stringify(SEED)),S0||{});delete S.pass;S.houses=S.houses||[];S.comps=S.comps||[];S.gallery=S.gallery||[];S.parts=S.parts||[];S.tpl=S.tpl||1;S.tplOn=S.tplOn||[true,true,true];S.tplBg=S.tplBg||[null,null,null];const OLD={name:"EVENT EUPHORIA ’26",hero:"Euphoria",tag:"7TH ANNUAL ARTS & CULTURAL FESTIVAL",desc:"Sirajul Irfan Da’wa Dars flagship cultural & academic competition. Celebrating talent, literary perfection, and academic excellence.",venue:"Sirajul Irfan Off Campus",footer:"© 2026 Sirajul Irfan Da’wa Dars · Event Euphoria Festival Portal",posterNote:"Sirajul Irfan Da’wa Dars",logo:""};const DEF={name:"FINE ARTS 2026",hero:"FINE ARTS 2026",tag:"BLOSSOM ARTS & CULTURAL FESTIVAL",desc:"Celebrating talent, literary perfection, and academic excellence of blossom college",venue:"Blossom College",footer:"© Students Union 2026-27",posterNote:"@blossom Students union",logo:"",ov:0};S.set={...DEF,...(S.set||{})};Object.keys(OLD).forEach(k=>{if(S.set[k]===OLD[k])S.set[k]=DEF[k]});S.pts=S.pts||[5,3,1];
 
 let pt;
 let DIRTY=false,OWNER=true,LOADED=false,PD=[];const save=()=>{if(REMOTE){DIRTY=true;bar();return}try{localStorage.setItem("euph",JSON.stringify(S))}catch(e){alert("Storage full – remove some photos")}};
@@ -47,7 +47,7 @@ function about(){return `<h2>About Fine Arts 2026</h2>
 </div>`}
 function result(q){const id=+q,cs=S.comps.filter(c=>!id||c.id===id);return `<h2>Published Results</h2>${houseList()}<h2>Competition Results</h2>
 <div class="card"><input id="sq" placeholder="Search candidate or competition…" oninput="srch()"></div><div id="rl">${rlist(cs,"")}</div>`}
-const SEL={},PV={},COL={},TPL=[{bg:["#070a12","#1b1440"],ac:"#f5b942",tx:"#ffffff",card:"rgba(255,255,255,.07)"},{bg:["#7c5cff","#2b1a6b"],ac:"#ffd76a",tx:"#ffffff",card:"rgba(255,255,255,.15)"},{bg:["#fff7e6","#ffe3b0"],ac:"#b45309",tx:"#2a1a05",card:"rgba(180,83,9,.1)"}];
+const SEL={},PV={},COL={},TPL=[{bg:["#000000","#000000"],ac:"#f7d84a",tx:"#ffffff"},{bg:["#7c5cff","#2b1a6b"],ac:"#ffd76a",tx:"#ffffff"},{bg:["#fff7e6","#ffe3b0"],ac:"#b45309",tx:"#2a1a05"}];
 const BGI={};
 function loadBg(i){const d=S.tplBg[i];if(d){const im=new Image();im.onload=()=>{BGI[i]=im;render()};im.src=d}else delete BGI[i]}
 async function setBg(i,d){if(d&&String(d).includes("/api/img?id=")){try{d=await asData(d,1080)}catch(e){return toast("Could not use that photo, upload it directly instead")}}S.tplBg[i]=d||null;save();loadBg(i);render()}
@@ -71,22 +71,58 @@ const cmp=id=>S.comps.find(x=>x.id==id),parseM=v=>String(v).split(/[,\s]+/).filt
 const AP={nws:(i,j,v)=>{if(S.news&&S.news[i]!==undefined)S.news[i]=v},sset:(i,j,v)=>{S.set[i]=v},hn:(i,j,v)=>{v=v.trim();if(v&&v!==S.houses[i].n)ren(i,v)},hb:(i,j,v)=>{S.houses[i].b=+v||0},
 pn:(i,j,v)=>{v=v.trim();const q=S.parts[i];if(!v||v===q.n)return;const o=q.n;q.n=v;S.comps.forEach(c=>c.res.forEach(r=>{if(r.name===o)r.name=v}))},ph:(i,j,v)=>{S.parts[i].h=v},
 rn:(i,j,v)=>{cmp(i).res[j].name=v},rh:(i,j,v)=>{cmp(i).res[j].h=v},cn:(i,j,v)=>{if(v.trim())cmp(i).name=v.trim()},cp:(i,j,v)=>{const a=parseM(v);cmp(i).pts=a.length?a:null},
-pm:(i,j,v)=>{const a=parseM(v);if(a.length)S.pts=a},tpn:(i,j,v)=>{S.set.posterNote=v},ton:(i,j,v)=>{S.tplOn[i]=v},tdf:(i,j,v)=>{S.tpl=+v}};
+pm:(i,j,v)=>{const a=parseM(v);if(a.length)S.pts=a},tpn:(i,j,v)=>{S.set.posterNote=v},ton:(i,j,v)=>{S.tplOn[i]=v},tdf:(i,j,v)=>{S.tpl=+v},tov:(i,j,v)=>{S.set.ov=(+v)/100}};
 function applyAll(){document.querySelectorAll("#app input[data-a],#app select[data-a],#app textarea[data-a]").forEach(el=>{try{const t=el.type,v=t==="checkbox"?el.checked:t==="radio"?(el.checked?el.value:null):el.value;if(v===null)return;AP[el.dataset.a](el.dataset.i,el.dataset.j,v)}catch(e){}})}
 async function upd(btn){applyAll();save();render();if(REMOTE)await pubNow();else toast("Updated")}
 function bump(b,d){const i=b.parentElement.querySelector("input");i.value=(+i.value||0)+d}
 function markCard(){return `<div class="card"><b>Mark format</b> <span class="mu">(custom marks per position, comma separated)</span><br><br><input value="${S.pts.join(",")}" data-a="pm" placeholder="e.g. 10,7,5,3,1"><div class="mu" style="font-size:12px;margin:6px 0 10px">Position 1 gets the first number, position 2 the second, and so on. Positions beyond the list get 0. A single competition can use its own marks in "Competitions & results".</div></div>`}
 const setS=(k,v)=>{S.set[k]=v;save();nav("admin")};
 function settCard(){const f=[["name","Festival name (menu, posters, page title)"],["hero","Home title"],["tag","Tagline"],["venue","Venue"],["footer","Footer text"]];return `<div class="card"><b>Site settings</b><br><br>${f.map(([k,l])=>`<label class="mu" style="font-size:13px">${l}</label><input value="${esc(S.set[k])}" data-a="sset" data-i="${k}" style="margin:4px 0 10px">`).join("")}<label class="mu" style="font-size:13px">Logo (PNG, shown at the top of the site and posters)</label><div style="margin:6px 0 12px">${S.set.logo?`<img src="${S.set.logo}" alt="Logo" style="height:70px;display:block;margin-bottom:8px">`:""}<input type="file" accept="image/png" onchange="upLogo(this.files[0])">${S.set.logo?`<button class="btn d" style="padding:3px 12px;margin-top:6px" onclick="S.set.logo='';save();loadLogo();render()">Remove logo</button>`:""}</div><label class="mu" style="font-size:13px">Description</label><textarea rows="3" data-a="sset" data-i="desc" style="margin:4px 0 10px">${esc(S.set.desc)}</textarea><button class="btn s" onclick="S.set={...DEF};save();render()">Restore defaults</button></div>`}
-function poster(c,t){const bi=BGI[t-1],T=bi?{...TPL[t-1],ac:"#ffd76a",tx:"#ffffff",card:"rgba(0,0,0,.5)"}:TPL[t-1],cv=document.createElement("canvas");cv.width=1080;cv.height=1350;const x=cv.getContext("2d"),g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,T.bg[0]);g.addColorStop(1,T.bg[1]);x.fillStyle=g;x.fillRect(0,0,1080,1350);
-if(bi){const k=Math.max(1080/bi.width,1350/bi.height),bw=bi.width*k,bh=bi.height*k;x.drawImage(bi,(1080-bw)/2,(1350-bh)/2,bw,bh);x.fillStyle="rgba(0,0,0,.4)";x.fillRect(0,0,1080,1350)}
-const F="Sora,system-ui,sans-serif",L=90,fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"};x.textAlign="left";
-x.fillStyle=T.ac;const oy=LG?100:0;if(LG){const k=Math.min(110/LG.height,500/LG.width);x.drawImage(LG,L-20,50,LG.width*k,LG.height*k)}fo(700,26);x.fillText(S.set.name.toUpperCase(),L,110+oy,900);
-x.fillStyle=T.tx;fo(800,80);let ln=[],cur="";c.name.split(" ").forEach(w=>{const tt=cur?cur+" "+w:w;if(x.measureText(tt).width>900&&cur){ln.push(cur);cur=w}else cur=tt});ln.push(cur);ln=ln.slice(0,3);ln.forEach((q,i)=>x.fillText(q,L,250+oy+i*90,900));
-const rs=c.res.slice().sort((a,b)=>a.pos-b.pos).slice(0,10),y0=Math.max(430+oy,250+oy+ln.length*90+70),h=Math.min(130,(1190-y0-50)/Math.max(rs.length,1)),s=Math.min(1,h/100);
-x.strokeStyle=T.ac;x.lineWidth=3;x.strokeRect(L-20,y0,950,rs.length*h+50);x.fillStyle=T.ac;x.fillRect(L-20,y0-36,330,36);x.fillStyle="#000";fo(700,20);x.fillText("RESULT \u00b7 "+(c.type||"Individual").toUpperCase(),L-4,y0-12);
-rs.forEach((r,i)=>{const ry=y0+30+i*h;x.fillStyle=T.ac;fo(800,30*s);x.fillText(["1ST","2ND","3RD"][r.pos-1]||r.pos+"TH",L+10,ry+40*s);x.fillStyle=T.tx;fo(700,38*s);x.fillText(r.name,L+135,ry+40*s,720);x.globalAlpha=.85;fo(500,26*s);x.fillText(r.h,L+135,ry+76*s,760);x.globalAlpha=1});
-x.fillStyle=T.tx;x.globalAlpha=.7;fo(500,22);x.fillText(S.set.posterNote,L-20,1290);x.globalAlpha=1;return cv}
+function poster(c,t){
+const bi=BGI[t-1],B=TPL[t-1],T=bi?{...B,ac:t===3?"#ffd76a":B.ac,tx:"#ffffff"}:B,
+cv=document.createElement("canvas");cv.width=1080;cv.height=1350;
+const x=cv.getContext("2d"),g=x.createLinearGradient(0,0,1080,1350);
+g.addColorStop(0,T.bg[0]);g.addColorStop(1,T.bg[1]);x.fillStyle=g;x.fillRect(0,0,1080,1350);
+let shadow=false;
+if(bi){
+  const k=Math.max(1080/bi.width,1350/bi.height),bw=bi.width*k,bh=bi.height*k;
+  x.drawImage(bi,(1080-bw)/2,(1350-bh)/2,bw,bh);
+  const ov=Math.max(0,Math.min(.8,+S.set.ov||0));
+  if(ov>0){x.fillStyle="rgba(0,0,0,"+ov+")";x.fillRect(0,0,1080,1350)}
+  shadow=true;
+}
+const F="Sora,system-ui,sans-serif",L=150,
+fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"},
+shd=on=>{x.shadowColor=on&&shadow?"rgba(0,0,0,.45)":"transparent";x.shadowBlur=on&&shadow?12:0};
+shd(true);
+
+if(LG){const k=Math.min(80/LG.height,300/LG.width);x.drawImage(LG,L,60,LG.width*k,LG.height*k)}
+
+const no=pubList().indexOf(c)+1||1;
+x.textAlign="right";x.fillStyle=T.ac;fo(700,32);
+x.fillText("Result No "+String(no).padStart(2,"0"),960,140);
+
+x.textAlign="left";
+x.fillStyle=T.ac;fo(400,44);x.fillText((c.type||"Individual"),L,285);
+fo(800,68);
+let ln=[],cur="";
+c.name.split(" ").forEach(w=>{const tt=cur?cur+" "+w:w;if(x.measureText(tt).width>800&&cur){ln.push(cur);cur=w}else cur=tt});
+ln.push(cur);ln=ln.slice(0,2);
+ln.forEach((q,i)=>x.fillText(q,L,350+i*70,800));
+
+const rs=c.res.slice().sort((a,b)=>a.pos-b.pos).slice(0,10),
+y0=496+(ln.length-1)*70+(ln.length>1?20:0),
+h=Math.min(108,(1130-y0)/Math.max(rs.length,1)),s=Math.min(1,h/108);
+rs.forEach((r,i)=>{
+  const ry=y0+i*h;
+  x.fillStyle=T.tx;fo(400,36*s);
+  x.fillText(["1ST","2ND","3RD"][r.pos-1]||r.pos+"TH",L,ry+12*s);
+  fo(700,38*s);x.fillText(r.name,254,ry,780);
+  fo(400,28*s);x.fillText(r.h,254,ry+31*s,780);
+});
+
+shd(true);x.fillStyle=T.ac;fo(700,22);x.fillText(S.set.posterNote,L,1202);
+return cv}
 function toast(m){let e=$("#ts");if(!e){e=document.createElement("div");e.id="ts";e.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ac);color:#000;padding:10px 18px;border-radius:20px;font-weight:700;z-index:30;max-width:90%;text-align:center";document.body.appendChild(e)}e.textContent=m;e.style.bottom="28px";e.style.display="block";clearTimeout(e.t);e.t=setTimeout(()=>e.style.display="none",3000)}
 window.alert=toast;
 // ===== Breaking News (scrolling bar + admin box) =====
@@ -109,7 +145,7 @@ function dl(id){const[c,cv]=pcv(id),u=cv.toDataURL("image/png"),a=document.creat
 function sh(id){const[c,cv]=pcv(id);cv.toBlob(async b=>{const f=new File([b],c.name+".png",{type:"image/png"});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:c.name+" Result"});else if(navigator.share)await navigator.share({title:c.name+" Result",url:location.href});else{navigator.clipboard.writeText(location.href);alert("Link copied")}}catch(e){}})}
 function rlist(cs,q){q=q.toLowerCase();const o=cs.filter(c=>(c.res.length||c.poster)&&(!q||c.name.toLowerCase().includes(q)||c.res.some(r=>r.name.toLowerCase().includes(q))));return o.sort((a,b)=>pk(a)-pk(b)).map(c=>{const n=pubList().indexOf(c)+1,t=curT(c),rs=c.res.slice().sort((a,b)=>a.pos-b.pos),on=[1,2,3].filter(i=>S.tplOn[i-1]);
 return `<div class="rc"><div class="rh" onclick="tg(${c.id})"><div class="no">#${String(n).padStart(2,"0")}</div><div><span class="mu" style="font-size:12px">◎ ${c.type||"Individual"}</span><div style="font-size:20px;font-weight:800">${esc(c.name)}</div></div><span class="pb">● Published</span><span class="mu">${COL[c.id]?"▾":"▴"}</span></div>${COL[c.id]?"":`<div class="tbl" style="padding:8px 20px"><table class="rt"><tr><th>RANK</th><th>PARTICIPANT</th><th>TEAM</th><th>MARK</th></tr>${rs.map(r=>`<tr><td><span class="rk" style="background:${["#fbbf24","#cbd5e1","#c2701d"][r.pos-1]||"var(--bd)"};${r.pos>3?"color:var(--tx)":""}">${r.pos}</span></td><td><b>${esc(r.name.toUpperCase())}</b></td><td>${esc(r.h)}</td><td>${(c.pts||S.pts)[r.pos-1]||0}</td></tr>`).join("")}</table>${c.poster?`<img src="${c.poster}" alt="Result poster" style="width:100%;border-radius:10px;margin-top:10px;cursor:pointer" onclick="showImg(this.src)">`:""}${PV[c.id]?`<img src="${poster(c,t).toDataURL("image/jpeg",.8)}" alt="Poster preview" style="width:100%;max-width:420px;display:block;margin:12px auto;border-radius:10px">`:""}</div><div class="rf"><span class="mu" style="font-size:13px">✔ Official Verified Result</span><div class="tabs">${on.map(i=>`<button class="${i===t?"on":""}" onclick="tp(${c.id},${i})">Poster ${i}</button>`).join("")}</div><button class="btn s" style="color:var(--ac);border-color:var(--ac)" onclick="dl(${c.id})">⬇ DOWNLOAD</button><button class="btn s" onclick="sh(${c.id})">SHARE</button></div>`}</div>`}).join("")||'<div class="card mu">No published results found.</div>'}
-function tplCard(){const A=S.houses[0]?S.houses[0].n:"Team A",B=S.houses[1]?S.houses[1].n:"Team B",sm={name:"Sample Event",cat:"Prime Zone",type:"Individual",res:[{pos:1,name:"Participant One",h:A,g:"A+"},{pos:2,name:"Participant Two",h:B,g:"A"},{pos:3,name:"Participant Three",h:A,g:"B"}]};return `<div class="card"><b>Poster templates</b> <span class="mu">(visitors see these as Poster 1–3 on Results)</span><div style="margin:12px 0"><label class="mu" style="font-size:13px">Poster bottom small text (bottom-left of every poster)</label><input value="${esc(S.set.posterNote)}" data-a="tpn" style="margin:4px 0 8px"><button class="btn s" style="padding:4px 12px" onclick="this.previousElementSibling.value=DEF.posterNote">Use: ${esc(DEF.posterNote)}</button></div><div class="grid" style="margin-top:12px">${[1,2,3].map(i=>`<div><img src="${poster(sm,i).toDataURL("image/jpeg",.5)}" style="cursor:default;aspect-ratio:4/5"><label style="display:block;margin-top:6px"><input type="checkbox" style="width:auto" ${S.tplOn[i-1]?"checked":""} data-a="ton" data-i="${i-1}"> Poster ${i} enabled</label><label style="display:block"><input type="radio" name="dt" style="width:auto" ${S.tpl===i?"checked":""} data-a="tdf" value="${i}"> Default</label><div class="mu" style="font-size:12px;margin:8px 0 4px">Custom background ${S.tplBg[i-1]?"(active)":"(none)"}</div>${S.gallery.length?`<div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px">${S.gallery.map((g,k)=>`<img src="${g}" style="width:48px;height:48px;aspect-ratio:1;border-radius:6px;cursor:pointer;flex:none" title="Use gallery photo ${k+1}" onclick="setBg(${i-1},S.gallery[${k}])">`).join("")}</div>`:`<div class="mu" style="font-size:12px">Add gallery photos below, or upload here.</div>`}<input type="file" accept="image/*" onchange="upBg(${i-1},this.files[0])" style="margin-top:6px">${S.tplBg[i-1]?`<button class="btn d" style="padding:3px 12px;margin-top:6px" onclick="setBg(${i-1},null)">Reset to default</button>`:""}</div>`).join("")}</div></div>`}
+function tplCard(){const A=S.houses[0]?S.houses[0].n:"Team A",B=S.houses[1]?S.houses[1].n:"Team B",sm={name:"Sample Event",cat:"Prime Zone",type:"Individual",res:[{pos:1,name:"Participant One",h:A,g:"A+"},{pos:2,name:"Participant Two",h:B,g:"A"},{pos:3,name:"Participant Three",h:A,g:"B"}]};return `<div class="card"><b>Poster templates</b> <span class="mu">(visitors see these as Poster 1–3 on Results)</span><div style="margin:12px 0"><label class="mu" style="font-size:13px">Poster bottom small text (bottom-left of every poster)</label><input value="${esc(S.set.posterNote)}" data-a="tpn" style="margin:4px 0 8px"><button class="btn s" style="padding:4px 12px" onclick="this.previousElementSibling.value=DEF.posterNote">Use: ${esc(DEF.posterNote)}</button></div><div style="margin:12px 0"><label class="mu" style="font-size:13px">Background darkness on custom photos (0 = none)</label><input type="range" min="0" max="80" value="${Math.round((S.set.ov||0)*100)}" data-a="tov" style="margin:6px 0"></div><div class="grid" style="margin-top:12px">${[1,2,3].map(i=>`<div><img src="${poster(sm,i).toDataURL("image/jpeg",.5)}" style="cursor:default;aspect-ratio:4/5"><label style="display:block;margin-top:6px"><input type="checkbox" style="width:auto" ${S.tplOn[i-1]?"checked":""} data-a="ton" data-i="${i-1}"> Poster ${i} enabled</label><label style="display:block"><input type="radio" name="dt" style="width:auto" ${S.tpl===i?"checked":""} data-a="tdf" value="${i}"> Default</label><div class="mu" style="font-size:12px;margin:8px 0 4px">Custom background ${S.tplBg[i-1]?"(active)":"(none)"}</div>${S.gallery.length?`<div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px">${S.gallery.map((g,k)=>`<img src="${g}" style="width:48px;height:48px;aspect-ratio:1;border-radius:6px;cursor:pointer;flex:none" title="Use gallery photo ${k+1}" onclick="setBg(${i-1},S.gallery[${k}])">`).join("")}</div>`:`<div class="mu" style="font-size:12px">Add gallery photos below, or upload here.</div>`}<input type="file" accept="image/*" onchange="upBg(${i-1},this.files[0])" style="margin-top:6px">${S.tplBg[i-1]?`<button class="btn d" style="padding:3px 12px;margin-top:6px" onclick="setBg(${i-1},null)">Reset to default</button>`:""}</div>`).join("")}</div></div>`}
 function srch(){const id=+(location.hash.split("?")[1]||0);$("#rl").innerHTML=rlist(S.comps.filter(c=>!id||c.id===id),$("#sq").value)}
 const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ssg=k=>{try{return sessionStorage.getItem(k)}catch(e){return null}},DEFH="240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 async function sha(t){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return null}}
