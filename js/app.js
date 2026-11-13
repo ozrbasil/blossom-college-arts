@@ -136,15 +136,16 @@ if(bi){
   const ov=Math.max(0,Math.min(.8,+S.set.ov||0));
   if(ov>0){x.fillStyle="rgba(0,0,0,"+ov+")";x.fillRect(0,0,1080,1350)}
 }
-const F="Sora,system-ui,sans-serif",L=150,
+const T3=t===3,NM=T3?"#dc2626":T.ac,OT=T3?"#000000":T.ac,RT=T3?"#000000":T.tx,
+F="Sora,system-ui,sans-serif",L=150,
 fo=(w,z)=>{x.font=w+" "+z+"px "+F;if("letterSpacing" in x)x.letterSpacing=(-.035*z)+"px"};
 
 const no=pubList().indexOf(c)+1||1;
-x.textAlign="right";x.fillStyle=T.ac;fo(700,32);
+x.textAlign="right";x.fillStyle=OT;fo(700,32);
 x.fillText("Result No "+String(no).padStart(2,"0"),960,140);
 
 x.textAlign="left";
-x.fillStyle=T.ac;fo(800,68);
+x.fillStyle=NM;fo(800,68);
 let ln=[],cur="";
 c.name.split(" ").forEach(w=>{const tt=cur?cur+" "+w:w;if(x.measureText(tt).width>800&&cur){ln.push(cur);cur=w}else cur=tt});
 ln.push(cur);ln=ln.slice(0,2);
@@ -155,19 +156,19 @@ y0=496+(ln.length-1)*70+(ln.length>1?20:0),
 h=Math.min(108,(1130-y0)/Math.max(rs.length,1)),s=Math.min(1,h/108);
 rs.forEach((r,i)=>{
   const ry=y0+i*h;
-  x.fillStyle=T.tx;fo(400,36*s);
+  x.fillStyle=RT;fo(400,36*s);
   x.fillText(["1ST","2ND","3RD"][r.pos-1]||r.pos+"TH",L,ry+12*s);
   fo(700,38*s);x.fillText(r.name,254,ry,780);
   fo(400,28*s);x.fillText(r.h,254,ry+31*s,780);
 });
 
-x.fillStyle=T.ac;fo(700,22);x.fillText(S.set.posterNote,L,1202);
+x.fillStyle=OT;fo(700,22);x.fillText(S.set.posterNote,L,1202);
 return cv}
 function toast(m){let e=$("#ts");if(!e){e=document.createElement("div");e.id="ts";e.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ac);color:#000;padding:10px 18px;border-radius:20px;font-weight:700;z-index:30;max-width:90%;text-align:center";document.body.appendChild(e)}e.textContent=m;e.style.bottom="28px";e.style.display="block";clearTimeout(e.t);e.t=setTimeout(()=>e.style.display="none",3000)}
 window.alert=toast;
 // ===== Breaking News (scrolling bar + admin box) =====
-function bnRender(){const el=$("#bn");if(!el)return;const m=(S.news||[]).map(x=>String(x||"").trim()).filter(Boolean);if(!m.length){el.className="";el.innerHTML="";return}const d=Math.max(20,Math.round(m.join(" ").length*.2+12));el.className="on";el.innerHTML='<div class="lb"><i></i>FINE ARTS UPDATE</div><div class="vp"><div class="tk" style="--d:'+d+'s">'+m.map(esc).join('<span style="margin:0 28px;opacity:.7">→</span>')+'</div></div>'}
-function newsCard(){const n=S.news||[];return `<div class="card"><b>Fine Arts Update</b> <span class="mu" style="font-size:13px">(scrolls from right to left under the menu on every page)</span><div class="row" style="margin:10px 0"><input id="nw" placeholder="Message…" maxlength="200" onkeydown="if(event.key==='Enter')addN()"><button class="btn" onclick="addN()">Add</button></div>${n.length?n.map((t,i)=>`<div class="house" style="margin-bottom:6px"><input value="${esc(t)}" data-a="nws" data-i="${i}" maxlength="200" style="flex:1"><button class="btn d" onclick="delN(${i})">×</button></div>`).join(""):'<div class="mu" style="font-size:13px">No messages yet — the news bar stays hidden.</div>'}</div>`}
+function bnRender(){const el=$("#bn");if(!el)return;const m=(S.news||[]).map(x=>String(x||"").trim()).filter(Boolean);if(!m.length){el.className="";el.innerHTML="";return}const d=Math.max(20,Math.round(m.join(" ").length*.2+12));el.className="on";el.innerHTML='<div class="lb"><i></i>BREAKING NEWS</div><div class="vp"><div class="tk" style="--d:'+d+'s">'+m.map(esc).join('<span style="margin:0 28px;opacity:.7">→</span>')+'</div></div>'}
+function newsCard(){const n=S.news||[];return `<div class="card"><b>Breaking News</b> <span class="mu" style="font-size:13px">(scrolls from right to left under the menu on every page)</span><div class="row" style="margin:10px 0"><input id="nw" placeholder="Message…" maxlength="200" onkeydown="if(event.key==='Enter')addN()"><button class="btn" onclick="addN()">Add</button></div>${n.length?n.map((t,i)=>`<div class="house" style="margin-bottom:6px"><input value="${esc(t)}" data-a="nws" data-i="${i}" maxlength="200" style="flex:1"><button class="btn d" onclick="delN(${i})">×</button></div>`).join(""):'<div class="mu" style="font-size:13px">No messages yet — the news bar stays hidden.</div>'}</div>`}
 function addN(){const v=$("#nw").value.trim();if(!v)return toast("Type a message first");(S.news=S.news||[]).push(v);save();render()}
 function delN(i){S.news.splice(i,1);save();render()}
 // ===== end Breaking News =====
