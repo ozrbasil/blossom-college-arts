@@ -28,7 +28,7 @@ ${standings().some(x=>x.p>=1)?`<h2>Who's Leading? <span class="tag">LIVE</span><
 ${starsBlock()}
 <h2>Find a Result</h2><div class="card"><div class="row"><select id="fp"></select></div><br><button class="btn" onclick="location.hash='result?'+($('#fp').value||'')">GET RESULT →</button></div>
 <h2>In Pictures</h2>${gal(8)}<p><a class="btn s" href="#gallery">Open full gallery</a></p>`}
-function fill(){$("#fp").innerHTML='<option value="">All competitions</option>'+S.comps.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}
+function fill(){$("#fp").innerHTML='<option value="">All competitions</option>'+S.comps.filter(x=>(x.res&&x.res.length)||x.poster).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}
 function gal(n){const g=n?S.gallery.slice(0,n):S.gallery;return g.length?`<div class="grid">${g.map((s,i)=>`<div style="position:relative"><img src="${s}" alt="Festival photo" onclick="lb(${i})"></div>`).join("")}</div>`:'<div class="card mu">No photos yet. Admins can upload from the admin panel.</div>'}
 function showImg(s){$("#lbi").src=s;$("#lbd").href=s;$("#lbd").download="euphoria.jpg";$("#lb").style.display="flex"}
 function lb(i){showImg(S.gallery[i]);$("#lbd").download="Finearts.jpg"}
